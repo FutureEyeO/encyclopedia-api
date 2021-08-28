@@ -99,7 +99,7 @@ router.delete("/:id", async (req, res) => {
 
             }
 
-            await user.updateOne({ $unset: {posts: post._id } })
+            await user.updateOne({ $unset: { posts: post._id } })
             await post.deleteOne()
 
             res.status(200).send("Post has been deleting")
@@ -144,7 +144,7 @@ router.put("/:id/add_viewsCount", async (req, res) => {
         if (post) {
             await post.updateOne({ $inc: { viewsCount: 1 } })
             res.status(200).send("Post has been adding viewsCount")
-    
+
         } else {
             return res.status(404).send("None user or post with this id")
         }
@@ -171,6 +171,45 @@ router.get("/:id", async (req, res) => {
 })
 
 
+// search for posts :
+router.get("/search/all", async (req, res) => {
+    try {
+        console.log(req.query.labels)
+        const { labels, category } = req.query
+        console.log(labels, category)
+        let searchPosts = { }
+
+        if (labels && category) {
+            let posts = await Post.find({ relatedHash: { $in: labels }, category }, { _id: 1, category: 1, relatedHash: 1 })
+            posts = posts.reverse()
+            posts.forEach(p => {
+                searchPosts[p._id] = p
+            })
+        }
+        if (category) {
+            let posts = await Post.find({ category }, { _id: 1, category: 1, relatedHash: 1 })
+            posts = posts.reverse()
+            posts.forEach(p => {
+                searchPosts[p._id] = p
+            })
+        }
+        if (labels) {
+            let posts = await Post.find({ relatedHash: { $in: labels } }, { _id: 1, category: 1, relatedHash: 1 })
+            posts = posts.reverse()
+            console.log(posts)
+            posts.forEach(p => {
+                searchPosts[p._id] = p
+            })
+        }
+        res.status(200).json(searchPosts)
+
+    } catch (err) {
+        res.status(500).json(err)
+    }
+})
+
+
+
 // get all posts for user
 router.get("/timeline/user/:userId", async (req, res) => {
     try {
@@ -187,7 +226,7 @@ router.get("/timeline/user/:userId", async (req, res) => {
 router.get("/most_view/:limit", async (req, res) => {
     try {
         let limit = Number(req.params.limit)
-        const posts = await Post.find({}, { _id: 1, viewsCount: 1, createdAt: 1 }).limit(limit).sort({ viewsCount: 1, createdAt: 1 })
+        const posts = await Post.find({ }, { _id: 1, viewsCount: 1, createdAt: 1 }).limit(limit).sort({ viewsCount: 1, createdAt: 1 })
         res.status(200).json(posts.reverse())
     } catch (err) {
         res.status(500).json(err)
@@ -200,7 +239,7 @@ router.get("/most_like/:limit", async (req, res) => {
     try {
         let limit = Number(req.params.limit)
 
-        const posts = await Post.find({}, { _id: 1, likes: 1, createdAt: 1 }).limit(limit).sort({ likes: 1, createdAt: 1, })
+        const posts = await Post.find({ }, { _id: 1, likes: 1, createdAt: 1 }).limit(limit).sort({ likes: 1, createdAt: 1, })
         res.status(200).json(posts.reverse())
     } catch (err) {
         res.status(500).json(err)
@@ -213,7 +252,7 @@ router.get("/most_like/:limit", async (req, res) => {
 router.get("/last/:limit", async (req, res) => {
     try {
         let limit = Number(req.params.limit)
-        const posts = await Post.find({}, { _id: 1, createdAt: 1 }).limit(limit).sort({ createdAt: 1 })
+        const posts = await Post.find({ }, { _id: 1, createdAt: 1 }).limit(limit).sort({ createdAt: 1 })
         res.status(200).json(posts.reverse())
     } catch (err) {
         res.status(500).json(err)
@@ -249,7 +288,7 @@ router.get("/relatedHash/:relatedHash", async (req, res) => {
 // get all posts :
 router.get("/p/all", async (req, res) => {
     try {
-        const posts = await Post.find({}, { _id: 1 })
+        const posts = await Post.find({ }, { _id: 1 })
         res.status(200).json(posts)
     } catch (err) {
         res.status(500).json(err)

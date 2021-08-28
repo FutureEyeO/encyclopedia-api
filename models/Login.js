@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const db = require("../connections/api.db")
 
 const loginSchema = new mongoose.Schema({
     username: {
@@ -96,4 +97,4 @@ const loginSchema = new mongoose.Schema({
 
 }, { timestamps: true })
 
-module.exports = mongoose.model("Login", loginSchema)
+module.exports = db.model("Login", loginSchema)

@@ -154,17 +154,17 @@ router.delete("/:id", async (req, res) => {
 })
 
 // get a user :
-router.get("/:id_user/:type", async (req, res) => {
+router.get("/:userId/:type", async (req, res) => {
 
-    if (req.params.id_user) {
+    if (req.params.userId) {
         try {
 
-            console.log(req.params.id_user, req.params.type)
+            console.log(req.params.userId, req.params.type)
             let user = {}
             if (req.params.type == "username" || req.params.type == "user")
-                user = await User.findOne({ username: req.params.id_user })
+                user = await User.findOne({ username: req.params.userId })
             else if (req.params.type == "userId" || req.params.type == "id")
-                user = await User.findOne({ _id: req.params.id_user })
+                user = await User.findOne({ _id: req.params.userId })
 
             console.log(user)
 

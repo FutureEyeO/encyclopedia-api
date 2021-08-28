@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
+const db = require("../connections/statistics.db")
 
-const statisticSchema = mongoose.Schema({
+const visitSchema = mongoose.Schema({
     ip: {
         type: String,
         required: true
@@ -29,4 +30,4 @@ const statisticSchema = mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model("Statistic", statisticSchema)
+module.exports = db.model("Visits", visitSchema)

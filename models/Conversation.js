@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const db = require("../connections/api.db")
 
 const conversationSchema = new mongoose.Schema({
     members: {
@@ -7,4 +8,4 @@ const conversationSchema = new mongoose.Schema({
     }
 }, { timestamps: true })
 
-module.exports = mongoose.model("Conversation", conversationSchema)
+module.exports = db.model("Conversation", conversationSchema)

@@ -99,7 +99,9 @@ router.delete("/:id", async (req, res) => {
 
             }
 
+            await user.updateOne({ $unset: {posts: post._id } })
             await post.deleteOne()
+
             res.status(200).send("Post has been deleting")
         } else {
             return res.status(404).send("None user or post with this id")

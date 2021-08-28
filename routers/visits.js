@@ -1,31 +1,29 @@
 const router = require("express").Router()
 
-const Visits = require("../models/Visits")
+const { Visits, VisitsLog } = require("../models/Visits")
 
 router.post("/", async (req, res) => {
     try {
 
         const { ip, userId, url } = req.body
 
-        console.log(req.body)
-
         let findVisitByIp = await Visits.findOne({ ip, url })
         let findVisitById = await Visits.findOne({ userId, url })
 
 
         if (!findVisitByIp)
-        findVisitByIp = {}
+            findVisitByIp = { }
 
         if (!findVisitById)
-        findVisitById = {}
+            findVisitById = { }
 
         if (findVisitByIp._id || findVisitById._id) {
             let findVisit = Object()
 
             if (findVisitByIp._id)
-            findVisit = findVisitByIp
+                findVisit = findVisitByIp
             if (findVisitById._id)
-            findVisit = findVisitById
+                findVisit = findVisitById
 
             req.body.visitCount = findVisit.visitCount + 1
 
@@ -52,6 +50,39 @@ router.get("/visit_count", async (req, res) => {
             visitCount += visit.visitCount
         })
         res.status(200).json(visitCount)
+    } catch (err) {
+        res.status(500).json(err)
+    }
+})
+
+
+// visits log 
+
+
+router.post("/log", async (req, res) => {
+    try {
+
+        const { visitors, url, date } = req.body
+
+        let findVisitLog = await VisitsLog.findOne({ url, date })
+
+        if (!findVisitLog)
+            findVisitLog = { }
+
+        if (findVisitLog._id) {
+            req.body.visitors = { ...findVisitLog.visitors, ...visitors }
+
+            const updatedVisitsLog = await findVisitLog.updateOne(req.body)
+            res.status(200).json(updatedVisitsLog)
+
+        } else {
+            console.log(req.body)
+            const newVisitsLog = new VisitsLog(req.body)
+            console.log(newVisitsLog)
+            const visitsLog = await newVisitsLog.save()
+            console.log(visitsLog)
+            res.status(200).json(visitsLog)
+        }
     } catch (err) {
         res.status(500).json(err)
     }

@@ -5,7 +5,9 @@ const bcrypt = require("bcrypt")
 
 const fs = require("fs");
 const path = require("path")
-const url = require("url")
+const url = require("url");
+const { v4 } = require("uuid");
+const constants = require("../constant/general");
 
 
 const PATH_POST = `public/post`
@@ -129,6 +131,84 @@ router.put("/:id/like", async (req, res) => {
                 await user.updateOne({ $pull: { posts_likes: req.params.id } })
                 res.status(200).send("Post has been removing like")
             }
+        } else {
+            return res.status(404).send("None user or post with this id")
+        }
+    } catch (err) {
+        return res.status(500).json(err)
+    }
+})
+
+
+// add comment for post :
+router.put("/:id/comment", async (req, res) => {
+    try {
+        const { id } = req.params
+        const { userId, text } = req.body
+        const post = await Post.findOne({ _id: id }, { comments: 1 })
+        const user = await User.findOne({ _id: userId }, { posts_likes: 1 })
+
+        if (post && user) {
+
+            let commentCount = 0 
+            post.comments.forEach(c => {
+                if (c.userId == userId) {
+                    commentCount++
+                } 
+            })
+
+            if (commentCount >= constants.limitPostCommentsUser || post.comments.length >= constants.limitPostComments) {
+                return res.status(400).send("Comment limit reached")
+
+            }
+
+            await post.updateOne({
+                $push: {
+                    comments: {
+                        id: v4(),
+                        userId,
+                        text,
+                        time: Date.now()
+                    }
+                }
+            })
+
+            const updatedPost = await Post.findOne({ _id: id }, { comments: 1 })
+
+            res.status(200).json(updatedPost)
+
+        } else {
+            return res.status(404).send("None user or post with this id")
+        }
+    } catch (err) {
+        return res.status(500).json(err)
+    }
+})
+
+
+// delet comment for post :
+router.delete("/:id/comment", async (req, res) => {
+    try {
+        const { id } = req.params
+        const { userId, commentId } = req.body
+        const post = await Post.findOne({ _id: id }, { comments: 1 })
+        const user = await User.findOne({ _id: userId }, { _id: 1 })
+
+        if (post._id && user._id && commentId) {
+
+            await post.updateOne({
+                $pull: {
+                    comments: {
+                        id: commentId,
+                        userId,
+                    }
+                }
+            })
+
+            const updatedPost = await Post.findOne({ _id: id }, { comments: 1 })
+
+            res.status(200).json(updatedPost)
+
         } else {
             return res.status(404).send("None user or post with this id")
         }

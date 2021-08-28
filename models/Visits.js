@@ -13,7 +13,7 @@ const visitSchema = mongoose.Schema({
     url: {
         type: String,
         defualt: "",
-        require: true,
+        required: true,
     },
     timeTaken: {
         type: Number,
@@ -28,6 +28,40 @@ const visitSchema = mongoose.Schema({
         type: Number,
         defualt: 0
     }
-})
+}, { timestamps: true })
 
-module.exports = db.model("Visits", visitSchema)
+module.exports.Visits = db.model("Visits", visitSchema)
+
+
+const visitsLogSchema = mongoose.Schema({
+    url: {
+        type: String,
+        defualt: "",
+        require: true,
+        unique: true
+    },
+    date: {
+        type: String,
+        required: true
+    },
+    visitors: {
+        type: Object,
+        require: true,
+        ip: {
+            type: Object,
+            require: true,
+            userId: {
+                type: String,
+                defualt: ""
+            },
+            timeTaken: {
+                type: Number,
+                defualt: 0,
+            }, 
+        }
+    }
+}, { timestamps: true })
+
+
+module.exports.VisitsLog = db.model("VisitsLog", visitsLogSchema)
+

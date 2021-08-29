@@ -50,14 +50,14 @@ const userSchema = new mongoose.Schema({
         type: Array,
         default: []
     },
-    isAdmin: {
-        type: Boolean,
-        default: false,
-    },
-    isAuthor: {
-        type: Boolean,
-        defualt: false,
-    },
+    // isAdmin: {
+    //     type: Boolean,
+    //     default: false,
+    // },
+    // isAuthor: {
+    //     type: Boolean,
+    //     defualt: false,
+    // },
     desc: {
         type: String,
         max: 50

@@ -15,11 +15,19 @@ const loginSchema = new mongoose.Schema({
         max: 20,
         required: true,
     },
+    ip: {
+        type: String,
+        defualt: "", 
+    },
     email: {
         type: String,
         max: 50,
         required: true,
         unique: true
+    },
+    website: {
+        type: String,
+        defualt: ""
     },
     profileImg: {
         type: String,
@@ -37,14 +45,7 @@ const loginSchema = new mongoose.Schema({
         type: Array,
         default: []
     },
-    isAdmin: {
-        type: Boolean,
-        default: false
-    },
-    isAuthor: {
-        type: Boolean,
-        defualt: false,
-    },
+
     desc: {
         type: String,
         max: 50

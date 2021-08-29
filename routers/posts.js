@@ -148,17 +148,22 @@ router.put("/:id/comment", async (req, res) => {
         const post = await Post.findOne({ _id: id }, { comments: 1 })
         const user = await User.findOne({ _id: userId }, { posts_likes: 1 })
 
-        if (post && user) {
+        if (post._id && user._id) {
 
-            let commentCount = 0 
+            let commentCount = 0
             post.comments.forEach(c => {
                 if (c.userId == userId) {
                     commentCount++
-                } 
+                }
             })
 
             if (commentCount >= constants.limitPostCommentsUser || post.comments.length >= constants.limitPostComments) {
                 return res.status(400).send("Comment limit reached")
+
+            }
+
+            if (text.length > 3) {
+                return res.status(400).send("text is very small you cant post comment less than 3 characters !")
 
             }
 

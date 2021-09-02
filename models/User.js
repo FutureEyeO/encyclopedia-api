@@ -3,27 +3,31 @@ const db = require("../connections/api.db")
 
 const userSchema = new mongoose.Schema({
     username: {
-        type: String, 
+        type: String,
         min: 3,
         max: 16,
         required: true,
         unique: true
     },
     name: {
-        type: String, 
+        type: String,
         min: 3,
         max: 20,
         required: true,
     },
     ip: {
         type: String,
-        defualt: "", 
+        defualt: "",
     },
     email: {
         type: String,
         max: 50,
         required: true,
         unique: true
+    },
+    publicEmail: {
+        type: String,
+        default: ""
     },
     website: {
         type: String,
@@ -39,7 +43,7 @@ const userSchema = new mongoose.Schema({
         default: ""
     },
     coverImg: {
-        type: String, 
+        type: String,
         default: ""
     },
     followers: {
@@ -69,6 +73,10 @@ const userSchema = new mongoose.Schema({
     posts_likes: {
         type: Array,
         default: []
+    },
+    socialMedia: {
+        type: Object,
+        default: { }
     }
 }, { timestamps: true })
 

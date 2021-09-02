@@ -36,9 +36,7 @@ module.exports.Visits = db.model("Visits", visitSchema)
 const visitsLogSchema = mongoose.Schema({
     url: {
         type: String,
-        defualt: "",
         require: true,
-        unique: true
     },
     date: {
         type: String,
@@ -46,19 +44,7 @@ const visitsLogSchema = mongoose.Schema({
     },
     visitors: {
         type: Object,
-        require: true,
-        ip: {
-            type: Object,
-            require: true,
-            userId: {
-                type: String,
-                defualt: ""
-            },
-            timeTaken: {
-                type: Number,
-                defualt: 0,
-            }, 
-        }
+        defualt: {}
     }
 }, { timestamps: true })
 

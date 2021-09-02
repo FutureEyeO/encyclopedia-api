@@ -8,6 +8,7 @@ const path = require("path")
 const url = require("url");
 const { v4 } = require("uuid");
 const constants = require("../constant/general");
+const Api = require("../functions/Api");
 
 
 const PATH_POST = `public/post`
@@ -195,11 +196,20 @@ router.put("/:id/comment", async (req, res) => {
 router.delete("/:id/comment", async (req, res) => {
     try {
         const { id } = req.params
-        const { userId, commentId } = req.body
+        const { userId, commentId } = req.query
         const post = await Post.findOne({ _id: id }, { comments: 1 })
-        const user = await User.findOne({ _id: userId }, { _id: 1 })
+        let user = await User.findOne({ _id: userId }, { _id: 1 })
+        console.log(user)
+        user = await Api.returnUserData(user._doc)
+        console.log(user, "6788")
 
-        if (post._id && user._id && commentId) {
+        if (post._id && ((user._id == userId) || (user.isAuthor && user.isAdmin)) && commentId) {
+            console.log({
+                comments: {
+                    id: commentId,
+                    userId,
+                }
+            })
 
             await post.updateOne({
                 $pull: {
@@ -259,27 +269,26 @@ router.get("/:id", async (req, res) => {
 // search for posts :
 router.get("/search/all", async (req, res) => {
     try {
-        console.log(req.query.labels)
         const { labels, category } = req.query
-        console.log(labels, category)
+        const limit = Number(req.query.limit)
+        console.log(labels, category, limit)
         let searchPosts = { }
 
-        if (labels && category) {
-            let posts = await Post.find({ relatedHash: { $in: labels }, category }, { _id: 1, category: 1, relatedHash: 1 })
+        if (labels && category && limit) {
+            let posts = await Post.find({ relatedHash: { $in: labels }, category }, { _id: 1, category: 1, relatedHash: 1 }).limit(limit)
             posts = posts.reverse()
             posts.forEach(p => {
                 searchPosts[p._id] = p
             })
-        }
-        if (category) {
-            let posts = await Post.find({ category }, { _id: 1, category: 1, relatedHash: 1 })
+        } else if (category && limit) {
+            let posts = await Post.find({ category }, { _id: 1, category: 1, relatedHash: 1 }).limit(limit)
             posts = posts.reverse()
+            console.log(posts)
             posts.forEach(p => {
                 searchPosts[p._id] = p
             })
-        }
-        if (labels) {
-            let posts = await Post.find({ relatedHash: { $in: labels } }, { _id: 1, category: 1, relatedHash: 1 })
+        } else if (labels && limit) {
+            let posts = await Post.find({ relatedHash: { $in: labels } }, { _id: 1, category: 1, relatedHash: 1 }).limit(limit)
             posts = posts.reverse()
             console.log(posts)
             posts.forEach(p => {

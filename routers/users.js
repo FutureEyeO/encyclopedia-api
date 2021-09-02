@@ -19,18 +19,7 @@ const PATH_POST = `public/post`
 const PATH_USER = `public/user`
 // const useragent = require('express-useragent');
 
-const returnUserData = async (data) => {
-    try {
-        if (data) {
-            const { password, updatedAt, __v, ...userData } = data
-            return { ...userData, ...await Api.checkVC(userData._id) }
-        } else
-            return {}
 
-    } catch (err) {
-        return {}
-    }
-}
 
 // update user :
 router.put("/:id", async (req, res) => {
@@ -52,7 +41,7 @@ router.put("/:id", async (req, res) => {
 
             let userUpdated = await User.findOne({ _id: req.params.id })
 
-            userUpdated = await returnUserData(userUpdated._doc)
+            userUpdated = await Api.returnUserData(userUpdated._doc)
             res.status(200).json(userUpdated)
 
         } else {
@@ -82,7 +71,7 @@ router.put("/:id/set_img", async (req, res) => {
 
             let userUpdated = await User.findOne({ _id: req.params.id })
 
-            userUpdated = await returnUserData(userUpdated._doc)
+            userUpdated = await Api.returnUserData(userUpdated._doc)
 
             res.status(200).json(userUpdated)
 
@@ -160,7 +149,7 @@ router.get("/:userId/:type", async (req, res) => {
         try {
 
             console.log(req.params.userId, req.params.type)
-            let user = {}
+            let user = { }
             if (req.params.type == "username" || req.params.type == "user")
                 user = await User.findOne({ username: req.params.userId })
             else if (req.params.type == "userId" || req.params.type == "id")
@@ -168,7 +157,7 @@ router.get("/:userId/:type", async (req, res) => {
 
             console.log(user)
 
-            let userData = await returnUserData(user._doc)
+            let userData = await Api.returnUserData(user._doc)
 
             res.status(200).json(userData)
         } catch (err) {
@@ -229,10 +218,11 @@ router.put("/:id/unfollow", async (req, res) => {
 // get all users :
 router.get("/get_all_users", async (req, res) => {
     try {
-        const users = await User.find({})
+        const limit = Number(req.query.limit)
+        const users = await User.find({ }).limit(limit)
         let usersInfo = []
         users.forEach(async user => {
-            let userData = await returnUserData(user._doc)
+            let userData = await Api.returnUserData(user._doc)
             usersInfo.push(userData)
         })
         res.status(200).json(usersInfo)

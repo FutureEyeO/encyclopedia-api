@@ -69,6 +69,7 @@ router.post("/log", async (req, res) => {
         if (!findVisitLog)
             findVisitLog = { }
 
+        console.log(findVisitLog)
         if (findVisitLog._id) {
             req.body.visitors = { ...findVisitLog.visitors, ...visitors }
 
@@ -76,6 +77,14 @@ router.post("/log", async (req, res) => {
             res.status(200).json(updatedVisitsLog)
 
         } else {
+            // {
+            //     _id: 612f37a4c89836362844272c,
+            //     url: '/p/6129e7d95f4feb09b0e87684',
+            //     date: '3-8-2021',
+            //     visitors: {
+            //       '37,40,110,95': { userId: '612725c8c683703f14888ddf', timeTaken: 4 }
+            //     }
+            //   }
             console.log(req.body)
             const newVisitsLog = new VisitsLog(req.body)
             console.log(newVisitsLog)

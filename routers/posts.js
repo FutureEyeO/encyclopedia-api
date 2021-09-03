@@ -163,7 +163,7 @@ router.put("/:id/comment", async (req, res) => {
 
             }
 
-            if (text.length > 3) {
+            if (text.length < 3) {
                 return res.status(400).send("text is very small you cant post comment less than 3 characters !")
 
             }

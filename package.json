@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@mapbox/node-pre-gyp": "^1.0.5",
     "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
@@ -20,6 +21,9 @@
     "mongoose": "^5.13.7",
     "morgan": "^1.10.0",
     "multer": "^1.4.3",
+    "node-pre-gyp": "^0.17.0",
+    "nodemon": "^2.0.9",
+    "rimraf": "^3.0.2",
     "timeago.js": "^4.0.2",
     "url-join": "^4.0.1",
     "uuid": "^8.3.2"

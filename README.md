@@ -1,1 +1,1 @@
-# medical-encyclopedia-api
+# encyclopedia-api
